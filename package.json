@@ -1,0 +1,40 @@
+{
+  "name": "letreco",
+  "version": "1.0.0",
+  "description": "Letreco - Portuguese Wordle Clone. Guess the 5-letter Portuguese word in 6 attempts!",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 3000",
+    "start": "python3 -m http.server 8080",
+    "build": "echo 'No build step required for vanilla JS app'",
+    "deploy": "echo 'Deploy to Vercel or Railway'",
+    "test": "echo 'Run manual tests in browser'"
+  },
+  "keywords": [
+    "wordle",
+    "portuguese",
+    "word-game",
+    "puzzle",
+    "daily",
+    "letreco",
+    "pt",
+    "game"
+  ],
+  "author": "lmaia-22",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lmaia-22/letreco.git"
+  },
+  "homepage": "https://letreco.vercel.app",
+  "engines": {
+    "node": ">=14"
+  },
+  "devDependencies": {},
+  "dependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
