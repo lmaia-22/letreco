@@ -532,7 +532,7 @@ function updateStatsDisplay() {
 }
 
 // Share functionality
-const SHARE_URL = 'https://lmaia-22.github.io/letreco';
+const SHARE_URL = 'https://letreco.vercel.app';
 
 function getShareText() {
     const attempts = GAME_STATE.gameWon ? GAME_STATE.currentRow + 1 : 'X';
