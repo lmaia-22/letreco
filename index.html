@@ -9,13 +9,13 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://letreco.vercel.app/">
+    <meta property="og:url" content="https://lmaia-22.github.io/letreco/">
     <meta property="og:title" content="Letreco - Jogo de Palavras Diário">
     <meta property="og:description" content="Descubra a palavra de 5 letras em 6 tentativas! Jogo diário em português.">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://letreco.vercel.app/">
+    <meta property="twitter:url" content="https://lmaia-22.github.io/letreco/">
     <meta property="twitter:title" content="Letreco - Jogo de Palavras Diário">
     <meta property="twitter:description" content="Descubra a palavra de 5 letras em 6 tentativas! Jogo diário em português.">
     
@@ -162,7 +162,13 @@
                 <strong>A palavra era: <span id="correct-word"></span></strong>
             </div>
             <div class="share-container">
-                <button id="share-result-btn" class="share-button">Partilhar Resultado</button>
+                <button id="share-result-btn" class="share-button">📋 Copiar Resultado</button>
+                <div class="share-social">
+                    <button onclick="shareToWhatsApp()" class="share-social-btn share-whatsapp" title="WhatsApp">💬 WhatsApp</button>
+                    <button onclick="shareToTwitter()" class="share-social-btn share-twitter" title="Twitter/X">𝕏 Twitter</button>
+                    <button onclick="shareToInstagram()" class="share-social-btn share-instagram" title="Instagram Stories">📸 Stories</button>
+                    <button onclick="downloadShareImage()" class="share-social-btn share-download" title="Guardar imagem">💾 Imagem</button>
+                </div>
             </div>
             <!-- Interstitial Ad Placeholder -->
             <div class="ad-interstitial">

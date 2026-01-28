@@ -716,3 +716,49 @@ main {
         transform: translateY(0);
     }
 }
+/* Social Share Buttons */
+.share-social {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.share-social-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+}
+
+.share-social-btn:hover {
+    transform: scale(1.05);
+}
+
+.share-social-btn:active {
+    transform: scale(0.95);
+}
+
+.share-whatsapp {
+    background: #25D366;
+    color: white;
+}
+
+.share-twitter {
+    background: #1DA1F2;
+    color: white;
+}
+
+.share-instagram {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    color: white;
+}
+
+.share-download {
+    background: var(--key-bg, #818384);
+    color: white;
+}

@@ -532,13 +532,12 @@ function updateStatsDisplay() {
 }
 
 // Share functionality
-function shareResults() {
-    const stats = loadStats();
+const SHARE_URL = 'https://lmaia-22.github.io/letreco';
+
+function getShareText() {
     const attempts = GAME_STATE.gameWon ? GAME_STATE.currentRow + 1 : 'X';
+    let shareText = `🇵🇹 Letreco ${getDateString()} ${attempts}/6\n\n`;
     
-    let shareText = `Letreco ${getDateString()} ${attempts}/6\n\n`;
-    
-    // Add emoji grid
     GAME_STATE.guesses.forEach(guess => {
         const row = guess.result.map(state => {
             switch (state) {
@@ -551,7 +550,12 @@ function shareResults() {
         shareText += row + '\n';
     });
     
-    shareText += '\nhttps://letreco.vercel.app';
+    shareText += `\n${SHARE_URL}`;
+    return shareText;
+}
+
+function shareResults() {
+    const shareText = getShareText();
     
     if (navigator.share) {
         navigator.share({
@@ -563,6 +567,157 @@ function shareResults() {
     } else {
         copyToClipboard(shareText);
     }
+}
+
+// Generate share image for Instagram Stories / social media
+function generateShareImage() {
+    return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1080;
+        canvas.height = 1920;
+        const ctx = canvas.getContext('2d');
+        
+        // Background
+        const isDark = document.body.classList.contains('dark');
+        ctx.fillStyle = isDark ? '#121213' : '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Title
+        ctx.fillStyle = isDark ? '#ffffff' : '#1a1a1b';
+        ctx.font = 'bold 72px "Segoe UI", Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🇵🇹 LETRECO', canvas.width / 2, 300);
+        
+        // Date & score
+        const attempts = GAME_STATE.gameWon ? GAME_STATE.currentRow + 1 : 'X';
+        ctx.font = '48px "Segoe UI", Arial, sans-serif';
+        ctx.fillStyle = isDark ? '#818384' : '#787c7e';
+        ctx.fillText(`${getDateString()} — ${attempts}/6`, canvas.width / 2, 380);
+        
+        // Grid
+        const tileSize = 110;
+        const gap = 12;
+        const gridWidth = 5 * tileSize + 4 * gap;
+        const startX = (canvas.width - gridWidth) / 2;
+        const startY = 480;
+        
+        const colors = {
+            correct: '#6aaa64',
+            present: '#c9b458',
+            absent: isDark ? '#3a3a3c' : '#787c7e',
+            empty: isDark ? '#3a3a3c' : '#d3d6da'
+        };
+        
+        for (let row = 0; row < 6; row++) {
+            for (let col = 0; col < 5; col++) {
+                const x = startX + col * (tileSize + gap);
+                const y = startY + row * (tileSize + gap);
+                
+                let color = colors.empty;
+                let letter = '';
+                
+                if (row < GAME_STATE.guesses.length) {
+                    const guess = GAME_STATE.guesses[row];
+                    letter = guess.word[col].toUpperCase();
+                    switch (guess.result[col]) {
+                        case LETTER_STATES.CORRECT: color = colors.correct; break;
+                        case LETTER_STATES.PRESENT: color = colors.present; break;
+                        case LETTER_STATES.ABSENT: color = colors.absent; break;
+                    }
+                }
+                
+                // Rounded rect
+                const r = 8;
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.lineTo(x + tileSize - r, y);
+                ctx.quadraticCurveTo(x + tileSize, y, x + tileSize, y + r);
+                ctx.lineTo(x + tileSize, y + tileSize - r);
+                ctx.quadraticCurveTo(x + tileSize, y + tileSize, x + tileSize - r, y + tileSize);
+                ctx.lineTo(x + r, y + tileSize);
+                ctx.quadraticCurveTo(x, y + tileSize, x, y + tileSize - r);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+                
+                // Letter
+                if (letter) {
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 56px "Segoe UI", Arial, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(letter, x + tileSize / 2, y + tileSize / 2);
+                }
+            }
+        }
+        
+        // Footer
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillStyle = isDark ? '#818384' : '#787c7e';
+        ctx.font = '36px "Segoe UI", Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(SHARE_URL, canvas.width / 2, 1700);
+        
+        // Watermark
+        ctx.font = '28px "Segoe UI", Arial, sans-serif';
+        ctx.fillText('Joga todos os dias!', canvas.width / 2, 1760);
+        
+        canvas.toBlob(resolve, 'image/png');
+    });
+}
+
+// Share to specific platforms
+function shareToTwitter() {
+    const text = encodeURIComponent(getShareText());
+    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+}
+
+function shareToWhatsApp() {
+    const text = encodeURIComponent(getShareText());
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+}
+
+async function shareToInstagram() {
+    const blob = await generateShareImage();
+    
+    // Try Web Share API with image (works on mobile for IG Stories)
+    if (navigator.share && navigator.canShare) {
+        const file = new File([blob], 'letreco-resultado.png', { type: 'image/png' });
+        const shareData = {
+            title: 'Letreco',
+            text: getShareText(),
+            files: [file]
+        };
+        
+        if (navigator.canShare(shareData)) {
+            try {
+                await navigator.share(shareData);
+                return;
+            } catch (e) { /* fallback below */ }
+        }
+    }
+    
+    // Fallback: download image
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'letreco-resultado.png';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Imagem guardada! Partilha nos Stories 📸');
+}
+
+async function downloadShareImage() {
+    const blob = await generateShareImage();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'letreco-resultado.png';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Imagem guardada!');
 }
 
 function copyToClipboard(text) {

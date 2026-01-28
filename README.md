@@ -25,7 +25,7 @@ Letreco é um jogo de palavras diário em português, inspirado no popular Wordl
 
 ## 🚀 Demo
 
-Joga online: [letreco.vercel.app](https://letreco.vercel.app)
+Joga online: [letreco.vercel.app](https://lmaia-22.github.io/letreco)
 
 ## 🛠️ Instalação e Desenvolvimento
 
