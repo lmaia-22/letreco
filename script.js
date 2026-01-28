@@ -30,6 +30,32 @@ const STORAGE_KEYS = {
     SETTINGS: 'letreco_settings'
 };
 
+// Word validation set (built once for fast lookup)
+const VALID_SET = new Set([...SOLUTION_WORDS, ...VALID_WORDS]);
+
+// Normalize accented characters to base letters
+function normalizeWord(word) {
+    return word.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+}
+
+// Check if word is in the valid dictionary
+function isValidWord(word) {
+    return VALID_SET.has(word.toUpperCase());
+}
+
+// Get deterministic daily word based on date
+function getDailyWord(date) {
+    const dateStr = date.toISOString().split('T')[0];
+    // Simple hash from date string
+    let hash = 0;
+    for (let i = 0; i < dateStr.length; i++) {
+        hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
+        hash |= 0;
+    }
+    const index = Math.abs(hash) % SOLUTION_WORDS.length;
+    return SOLUTION_WORDS[index];
+}
+
 // Initialize game on page load
 document.addEventListener('DOMContentLoaded', () => {
     initializeGame();
